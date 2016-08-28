@@ -15,7 +15,7 @@ for error in (range(400, 599)):
 #-----------------------------------------------------------------------------#
 @app.route("/")
 def hello():
-    return "Hello World!"
+    return render_template('index.html')
 
 @app.route("/login")
 def login():
