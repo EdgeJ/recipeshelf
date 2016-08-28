@@ -21,10 +21,6 @@ def hello():
 def login():
     return render_template('login.html')
 
-@app.route("/502")
-def test_502():
-    abort(502)
-
-@app.route("/403")
-def test_403():
-    abort(403)
+@app.route("/<int:error_code>")
+def test_error(error_code):
+    abort(error_code)
