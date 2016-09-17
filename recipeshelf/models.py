@@ -2,6 +2,7 @@
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] =
@@ -14,13 +15,51 @@ class User(db.model):
     password = db.Column(db.String(20))
     email = db.Column(db.String(20), unique=True)
     superuser = db.Column(db.Boolean)
+    recipes = db.relationship('Recipe', backref='user', lazy='dynamic')
 
-    def __init__(self, username, password, email):
+    def __init__(self, username, email):
         self.username = username
-        self.password = password
         self.email = email
 
     def __repr__(self):
         return '<User %r>' % self.username
 
+class Recipe(db.model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text, unique=True)
+    image_location = db.Column(db.String(80))
+    meal_type = db.Column(db.String(10))
+    quick_meal = db.Column(db.Boolean)
+    date_added = db.Column(db.DateTime)
+    user_id = db.Column(db.String(10), db.ForeignKey('user.id'))
+    recipe_contents = db.relationship('RecipeContents', backref='recipe',
+                                      lazy='dynamic')
 
+    def __init__(self, title, image_location, meal_type, quick_meal,
+                date_added, user_id):
+       self.title = title
+       self.image_location = image_location
+       meal_type = meal_type
+       quick_meal = quick_meal
+
+    def __repr__(self):
+        return '<Title %r>' % self.title
+
+class RecipeContents(db.model):
+    id = db.Column(db.Integer(10), db.ForeignKey('recipe.id'))
+    ingredient = db.relationship('Ingredient', backref='recipe',
+                                 lazy='dynamic')
+    primary_ingredient = db.Column(db.String(40))
+    serving_size = db.Column(db.Integer)
+    cuisine_type = db.Column(db.String(40))
+    body = db.Column(db.Text)
+
+class Ingredients(db.model):
+    name = db.Column(db.String(40))
+    recipe_using = db.Column(db.string(10), db.ForeignKey('recipe.id'))
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return '<Name %r>' % self.name
