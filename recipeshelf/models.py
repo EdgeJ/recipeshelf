@@ -5,11 +5,12 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] =
-'sqlite:////var/www/recipeshelf/database/recipeshelf.db'
+app.config[
+    'SQLALCHEMY_DATABASE_URI'
+    ] = 'sqlite:////var/www/recipeshelf/database/recipeshelf.db'
 db = SQLAlchemy(app)
 
-class User(db.model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(10), unique=True)
     password = db.Column(db.String(20))
@@ -24,7 +25,7 @@ class User(db.model):
     def __repr__(self):
         return '<User %r>' % self.username
 
-class Recipe(db.model):
+class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, unique=True)
     image_location = db.Column(db.String(80))
@@ -45,8 +46,9 @@ class Recipe(db.model):
     def __repr__(self):
         return '<Title %r>' % self.title
 
-class RecipeContents(db.model):
-    id = db.Column(db.Integer(10), db.ForeignKey('recipe.id'))
+class RecipeContents(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'))
     ingredient = db.relationship('Ingredients', backref='recipe',
                                  lazy='dynamic')
     primary_ingredient = db.Column(db.String(40))
@@ -54,9 +56,21 @@ class RecipeContents(db.model):
     cuisine_type = db.Column(db.String(40))
     body = db.Column(db.Text)
 
-class Ingredients(db.model):
+    def __init__(self, ingredient, primary_ingredient, serving_size,
+                 cuisine_type, body):
+        ingredient = self.ingredient
+        primary_ingredient = self.primary_ingredient
+        serving_size = self.serving_size
+        cuisine_type = self.cuisine_type
+        body = self.body
+
+    def __repr__(self):
+        return '<Body %r>' % self.body
+
+class Ingredients(db.Model):
+    id = db.Column(db.Integer, primary_key = True, unique = True)
     name = db.Column(db.String(40))
-    recipe_using = db.Column(db.string(10), db.ForeignKey('recipe.id'))
+    recipe_using = db.Column(db.String(10), db.ForeignKey('recipe.id'))
 
     def __init__(self, name):
         self.name = name
