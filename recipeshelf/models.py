@@ -47,7 +47,7 @@ class Recipe(db.model):
 
 class RecipeContents(db.model):
     id = db.Column(db.Integer(10), db.ForeignKey('recipe.id'))
-    ingredient = db.relationship('Ingredient', backref='recipe',
+    ingredient = db.relationship('Ingredients', backref='recipe',
                                  lazy='dynamic')
     primary_ingredient = db.Column(db.String(40))
     serving_size = db.Column(db.Integer)
