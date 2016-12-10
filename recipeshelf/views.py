@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, abort, url_for
 from flask_sqlalchemy import SQLAlchemy
+import controller
 app = Flask(__name__)
 
 # Error handling
@@ -25,3 +26,9 @@ def login():
 @app.route("/<int:error_code>")
 def test_error(error_code):
     abort(error_code)
+
+@app.route("/internal/db_actions")
+def db_actions():
+    db_action = request.args.get('action')
+    controller.db_actions(db_action)
+    return "Action complete."
