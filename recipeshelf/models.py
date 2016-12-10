@@ -1,5 +1,3 @@
-# http://flask-sqlalchemy.pocoo.org/2.1/quickstart/
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -31,15 +29,17 @@ class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, unique=True)
     image_location = db.Column(db.String(80))
-    meal_type = db.Column(db.String(10))
+    cuisine_type = db.Column(db.String(40))
+    ingredient = db.relationship('Ingredients', backref='recipe',
+                                 lazy='dynamic')
     quick_meal = db.Column(db.Boolean)
     date_added = db.Column(db.DateTime)
     user_id = db.Column(db.String(10), db.ForeignKey('user.id'))
     recipe_contents = db.relationship('RecipeContents', backref='recipe',
                                       lazy='dynamic')
 
-    def __init__(self, title, image_location, meal_type, quick_meal,
-                date_added, user_id, recipe_contents=None):
+    def __init__(self, title, image_location, cuisine_type, ingredient,
+                 user_id, quick_meal):
        self.title = title
        self.image_location = image_location
        self.meal_type = meal_type
@@ -52,16 +52,12 @@ class Recipe(db.Model):
 class RecipeContents(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'))
-    ingredient = db.relationship('Ingredients', backref='recipe',
-                                 lazy='dynamic')
     primary_ingredient = db.Column(db.String(40))
     serving_size = db.Column(db.Integer)
-    cuisine_type = db.Column(db.String(40))
     body = db.Column(db.Text)
 
-    def __init__(self, ingredient, primary_ingredient, serving_size,
-                 cuisine_type, body):
-        self.ingredient = ingredient
+    def __init__(self, recipe_id, primary_ingredient, serving_size, body=None):
+        self.recipe_id = recipe_id
         self.primary_ingredient = primary_ingredient
         self.serving_size = serving_size
         self.cuisine_type = cuisine_type
