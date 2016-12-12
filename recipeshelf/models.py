@@ -1,11 +1,12 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import settings
 
 app = Flask(__name__)
-app.config[
-    'SQLALCHEMY_DATABASE_URI'
-    ] = 'sqlite:////usr/local/www/database/recipeshelf.db'
+#app.config[
+#    'SQLALCHEMY_DATABASE_URI'
+#    ] = 'sqlite:////usr/local/www/database/recipeshelf.db'
 db = SQLAlchemy(app)
 
 class User(db.Model):
@@ -17,6 +18,7 @@ class User(db.Model):
     recipes = db.relationship('Recipe', backref='user', lazy='dynamic')
 
     def __init__(self, username, password, email, superuser=False):
+        self.id = id
         self.username = username
         self.password = password
         self.email = email
@@ -38,13 +40,15 @@ class Recipe(db.Model):
     recipe_contents = db.relationship('RecipeContents', backref='recipe',
                                       lazy='dynamic')
 
-    def __init__(self, title, image_location, cuisine_type, ingredient,
+    def __init__(self, id, title, image_location, cuisine_type, ingredient,
                  user_id, quick_meal):
-       self.title = title
-       self.image_location = image_location
-       self.meal_type = meal_type
-       self.quick_meal = quick_meal
-       self.recipe_contents = recipe_contents
+        self.id = id
+        self.title = title
+        self.image_location = image_location
+        self.meal_type = meal_type
+        self.quick_meal = quick_meal
+        self.date_added = datetime.utcnow()
+        self.recipe_contents = recipe_contents
 
     def __repr__(self):
         return '<Title %r>' % self.title

@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, abort, url_for
-from flask_sqlalchemy import SQLAlchemy
 import controller
 app = Flask(__name__)
 
@@ -16,12 +15,19 @@ for error in (range(400, 599)):
 # Routing
 #-----------------------------------------------------------------------------#
 @app.route("/")
-def hello():
+def index():
     return render_template('index.html')
 
-@app.route("/login")
+@app.route("/login", methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    if request.method == 'POST':
+        if controller.user_login(
+                request.form['username'], request.form['password']
+                ):
+            return redirect(url_for('index'))
+        else:
+            error = 'Invalid login.'
+    return render_template('login.html', error=None)
 
 @app.route("/<int:error_code>")
 def test_error(error_code):
@@ -30,5 +36,6 @@ def test_error(error_code):
 @app.route("/internal/db_actions")
 def db_actions():
     db_action = request.args.get('action')
-    controller.db_actions(db_action)
+    username = request.args.get('user')
+    controller.db_actions(db_action, username=None)
     return "Action complete."
