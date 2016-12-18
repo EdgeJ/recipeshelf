@@ -39,4 +39,6 @@ def create_recipe(
 def user_login(user_login, password):
     if User.query.filter_by(username=str(user_login)):
         user = User.query.filter_by(username=str(user_login)).first()
-    return user.id
+    if user != None:
+        return user.id
+    return False

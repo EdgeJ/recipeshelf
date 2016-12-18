@@ -5,11 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="" content="">
-    <meta name="John Edge" content="">
-    <link rel="icon" href="../../favicon.ico">
+    <meta name="Title" content="Recipeshelf">
+    <meta name="Author" content="John Edge">
+    <link rel="icon" href="{{ url_for(
+    	'static', filename='icons/favicon.ico'
+	) }}">
 
-    <title></title>
+    {% block title %}{% endblock %}
 
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for(
@@ -18,16 +20,28 @@
 
     <!-- Custom styles for this template -->
     <link href="{{ url_for(
-        'static', filename='css/theme.css'
+        'static', filename='css/signin.css'
         ) }}" rel="stylesheet">
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
   </head>
 
   <body>
+  {% block body %}{% endblock %}
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{{ url_for(
-        'static', filename='js/bootstrap.min.js'
+		'static', filename='js/bootstrap.min.js'
         ) }}"></script>
   </body>
+
 </html>

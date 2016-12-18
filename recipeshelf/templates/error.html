@@ -1,26 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="Error Page" content="">
-    <meta name="John Edge" content="">
-    <link rel="icon" href="../../favicon.ico">
-
-    <title>Oops! Something went wrong!</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="{{ url_for(
-        'static', filename='css/bootstrap.min.css'
-        ) }}" rel="stylesheet">
-
-  </head>
-
-  <body>
-
-        <img src="https://http.cat/{{ error }}" class="img-responsive
-        center-block">
-  </body>
-</html>
+{% extends "base_layout.html" %}
+{% block title %}
+  <title>Oops! Something went wrong!</title>
+{% endblock %}
+{% block body %}
+  <img src="https://http.cat/{{ error }}" class="img-responsive center-block">
+{% endblock %}
