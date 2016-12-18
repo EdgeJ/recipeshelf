@@ -2,19 +2,24 @@ from flask import Flask, render_template, request, abort, url_for
 from flask_sqlalchemy import SQLAlchemy
 from models import *
 
-def db_actions(action, username):
-    case = {
-            'create': db.create_all(),
-            'destroy': db.drop_all(),
-            'newuser': create_user(username, email='example@site.com'),
-            }
-    return case.get(action, None)
+def db_actions(action=None, username=None):
+    if action == 'create':
+        db.create_all()
+        return 'Database created.'
+    if action == 'destroy':
+        db.drop_all()
+        return 'Databased cleared.'
+    if action == 'newuser':
+        create_user(username, email='example@site2.com')
+        return 'User {0} created.'.format(username)
+    if action == None:
+        return False
 
 def create_user(username, email, superuser=False):
     password = None
     new_user = User(username, password, email, superuser)
     db.session.add(new_user)
-    db.session.commit
+    db.session.commit()
 
 def create_recipe(
         id, title, cuisine_type, primary_ingredient, user_id,
@@ -31,8 +36,7 @@ def create_recipe(
             db.session.add(new_ingredient)
     db.session.commit()
 
-def user_login(username, password):
-    if User.query.filter_by(username):
-        pass
-        return True
-    return False
+def user_login(user_login, password):
+    if User.query.filter_by(username=str(user_login)):
+        user = User.query.filter_by(username=str(user_login)).first()
+    return user.id

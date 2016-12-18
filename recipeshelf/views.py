@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, abort, url_for
+from flask import Flask, render_template, request, abort, url_for, redirect
 import controller
 app = Flask(__name__)
 
@@ -35,7 +35,6 @@ def test_error(error_code):
 
 @app.route("/internal/db_actions")
 def db_actions():
-    db_action = request.args.get('action')
-    username = request.args.get('user')
-    controller.db_actions(db_action, username=None)
-    return "Action complete."
+    return controller.db_actions(
+            action=request.args.get('action'), username=request.args.get('user')
+            )

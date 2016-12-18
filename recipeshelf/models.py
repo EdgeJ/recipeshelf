@@ -4,9 +4,7 @@ from datetime import datetime
 import settings
 
 app = Flask(__name__)
-#app.config[
-#    'SQLALCHEMY_DATABASE_URI'
-#    ] = 'sqlite:////usr/local/www/database/recipeshelf.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = settings.SQLALCHEMY_DATABASE_URI
 db = SQLAlchemy(app)
 
 class User(db.Model):
@@ -18,7 +16,6 @@ class User(db.Model):
     recipes = db.relationship('Recipe', backref='user', lazy='dynamic')
 
     def __init__(self, username, password, email, superuser=False):
-        self.id = id
         self.username = username
         self.password = password
         self.email = email
@@ -42,7 +39,6 @@ class Recipe(db.Model):
 
     def __init__(self, id, title, image_location, cuisine_type, ingredient,
                  user_id, quick_meal):
-        self.id = id
         self.title = title
         self.image_location = image_location
         self.meal_type = meal_type
