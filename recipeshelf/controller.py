@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, abort, url_for
+from flask import Flask, render_template, request, abort, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from models import *
 
-def db_actions(action=None, username=None):
+def db_actions(action=None, username=None, email=''):
     if action == 'create':
         db.create_all()
         return 'Database created.'
@@ -10,7 +10,7 @@ def db_actions(action=None, username=None):
         db.drop_all()
         return 'Databased cleared.'
     if action == 'newuser':
-        create_user(username, email='example@site2.com')
+        create_user(username, email)
         return 'User {0} created.'.format(username)
     if action == None:
         return False
@@ -22,8 +22,8 @@ def create_user(username, email, superuser=False):
     db.session.commit()
 
 def create_recipe(
-        id, title, cuisine_type, primary_ingredient, user_id,
-        serving_size, body, quick_meal, image_location, *ingredients
+        title, cuisine_type, primary_ingredient, user_id,
+        serving_size, body, quick_meal, image_location=None, *ingredients
         ):
     next_id = Recipe.query.filterby(id).last() + 1
     new_recipe = Recipe(next_id, title, image_location, cuisine_type,
@@ -40,5 +40,9 @@ def user_login(user_login, password):
     if User.query.filter_by(username=str(user_login)):
         user = User.query.filter_by(username=str(user_login)).first()
     if user != None:
+        session['username'] = user_login
         return user.id
     return False
+
+def user_logout():
+    session.pop['username', None]

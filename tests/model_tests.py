@@ -3,13 +3,13 @@ Testing module for recipeshelf models.  Using SQLAlchemy and Flask Testing
 modules.
 """
 import sys
-from flask_testing import TestCase
+from flask-testing import TestCase
 
 sys.path.insert(0, '../recipeshelf')
 from models import create_app, db
 
 class UserCreate(TestCase):
-    SQLALCHEMY_DATABASE_URI = "sqlite:///var/www/recipeshelf/testing/test.db"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///./test.db"
     TESTING = True
 
     def create_app(self):
