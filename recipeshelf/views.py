@@ -2,54 +2,62 @@ from flask import Flask, render_template, request, abort, url_for, redirect, ses
 import controller
 from os import urandom
 
-app = Flask(__name__)
-app.secret_key = urandom(24)
+APP = Flask(__name__)
+APP.secret_key = urandom(24)
+
 
 # Error handling
-#-----------------------------------------------------------------------------#
-
 def http_error(error):
+    """
+    Render error page for error code passed in as an argument.
+    """
     return render_template('error.html', error=error.code), error.code
 
-#a little clunky, but it dynamically routes all errors
-for error in (range(400, 599)):
-    app.error_handler_spec[None][error] = http_error
 
-@app.route("/<int:error_code>")
+# this is a little clunky, but it dynamically routes all errors
+for error in range(400, 599):
+    APP.error_handler_spec[None][error] = http_error
+
+
+@APP.route("/<int:error_code>")
 def test_error(error_code):
     abort(error_code)
 
+
 # Routing
-#-----------------------------------------------------------------------------#
-@app.route("/")
+@APP.route("/")
 def index():
     return render_template('index.html')
 
-@app.route("/login", methods=['GET', 'POST'])
+
+@APP.route("/login", methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
         if controller.user_login(
                 request.form['username'], request.form['password']
-                ):
+        ):
             session['username'] = request.form['username']
             return redirect(url_for('index'))
         else:
             error = 'Invalid login.'
     return render_template('login.html', error=error)
 
-@app.route("/logout")
+
+@APP.route("/logout")
 def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
-@app.route("/internal/db_actions")
+
+@APP.route("/internal/db_actions")
 def db_actions():
     return controller.db_actions(
-            action=request.args.get('action'), username=request.args.get('user')
-            )
+        action=request.args.get('action'), username=request.args.get('user')
+    )
 
-@app.route("/create_recipe", methods=['GET', 'POST'])
+
+@APP.route("/create_recipe", methods=['GET', 'POST'])
 def create_recipe():
     if request.method == 'POST':
         title = request.form['title']
@@ -67,7 +75,8 @@ def create_recipe():
         #)
         #return redirect('recipe', id=recipe_id)
         test_string = ''
-        for i in title, cuisine_type, primary_ingredient, user_id, serving_size, body, quick_meal, image_location:
+        for i in (title, cuisine_type, primary_ingredient, user_id,
+                  serving_size, body, quick_meal, image_location):
             test_string += ' {0}'.format(str(i))
         test_string += '<br>Ingredients:<br>'
         for i in ingredients:
