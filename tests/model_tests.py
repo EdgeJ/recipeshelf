@@ -6,7 +6,8 @@ import sys
 from flask-testing import TestCase
 
 sys.path.insert(0, '../recipeshelf')
-from models import create_app, db
+from models import create_app, DB
+
 
 class UserCreate(TestCase):
     SQLALCHEMY_DATABASE_URI = "sqlite:///./test.db"
@@ -17,15 +18,15 @@ class UserCreate(TestCase):
         return create_app(self)
 
     def setup(self):
-        db.create_all()
+        DB.create_all()
 
     def teardown(self):
-        db.session.remove()
-        db.drop_all()
+        DB.session.remove()
+        DB.drop_all()
 
     def test_create(self):
         user = User()
-        db.session.add(user)
-        db.session.commit()
-        assert user in db.session
+        DB.session.add(user)
+        DB.session.commit()
+        assert user in DB.session
         response = self.client.get("/")
