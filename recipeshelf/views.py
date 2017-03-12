@@ -5,7 +5,7 @@ This module controls the routing, error handling, URL generation, and
 sessions of the webpage.
 """
 from os import urandom
-from flask import Flask, render_template, request, abort, url_for, redirect, session
+from flask import abort, flash, Flask, redirect, render_template, request, session, url_for
 import recipeshelf.controller
 
 APP = Flask(__name__)
@@ -34,16 +34,22 @@ def index():
 
 @APP.route("/login", methods=['GET', 'POST'])
 def login():
-    error = None
+    if 'username' in session:
+        flash('You are already logged in.')
+        return render_template('index.html')
     if request.method == 'POST':
         if recipeshelf.controller.user_login(
                 request.form['username'], request.form['password']
         ):
             session['username'] = request.form['username']
+            flash('You are now logged in.')
             return redirect(url_for('index'))
         else:
-            error = 'Invalid login.'
-    return render_template('login.html', error=error)
+            return render_template(
+                'login.html', error='Invalid login.'
+            )
+    else:
+        return render_template('login.html')
 
 
 @APP.route("/logout")
@@ -52,6 +58,7 @@ def logout():
     Log the user out and return to the login page.
     """
     recipeshelf.controller.user_logout(user='username')
+    flash('You are now logged out.')
     return redirect(url_for('login'))
 
 
@@ -61,7 +68,9 @@ def db_actions():
     Perform database actions via HTTP GET method
     """
     return recipeshelf.controller.db_actions(
-        action=request.args.get('action'), username=request.args.get('user')
+        action=request.args.get('action'),
+        username=request.args.get('user'),
+        email=request.args.get('email')
     )
 
 

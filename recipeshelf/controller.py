@@ -8,6 +8,7 @@ def db_actions(action=None, username=None, email=''):
         DB.create_all()
         return 'Database created.'
     if action == 'destroy':
+        DB.session.rollback()
         DB.drop_all()
         return 'Databased cleared.'
     if action == 'newuser':
@@ -53,4 +54,4 @@ def user_logout(user=None):
     """
     Pop the current user out of the session.
     """
-    return session.pop[user, None]
+    return session.pop(user, None)
