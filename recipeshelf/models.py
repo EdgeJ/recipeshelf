@@ -1,10 +1,10 @@
+from datetime import datetime
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-import settings
+import recipeshelf.settings
 
 APP = Flask(__name__)
-APP.config['SQLALCHEMY_DATABASE_URI'] = settings.SQLALCHEMY_DATABASE_URI
+APP.config['SQLALCHEMY_DATABASE_URI'] = recipeshelf.settings.SQLALCHEMY_DATABASE_URI
 DB = SQLAlchemy(APP)
 
 

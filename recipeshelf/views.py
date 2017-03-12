@@ -1,32 +1,34 @@
-from flask import Flask, render_template, request, abort, url_for, redirect, session
-import controller
+"""
+Views for the recipeshelf application
+
+This module controls the routing, error handling, URL generation, and
+sessions of the webpage.
+"""
 from os import urandom
+from flask import Flask, render_template, request, abort, url_for, redirect, session
+import recipeshelf.controller
 
 APP = Flask(__name__)
 APP.secret_key = urandom(24)
 
 
 # Error handling
-def http_error(error):
-    """
-    Render error page for error code passed in as an argument.
-    """
-    return render_template('error.html', error=error.code), error.code
-
-
-# this is a little clunky, but it dynamically routes all errors
-for error in range(400, 599):
-    APP.error_handler_spec[None][error] = http_error
-
-
-@APP.route("/<int:error_code>")
-def test_error(error_code):
-    abort(error_code)
+# This dynamically routes all error codes from 400 to 599
+for error_code in range(400, 599):
+    @APP.errorhandler(error_code)
+    def http_error_code(error):
+        """
+        Render error page for error code passed in as an argument.
+        """
+        return render_template('error.html', error=error.code), error.code
 
 
 # Routing
 @APP.route("/")
 def index():
+    """
+    Render index page.
+    """
     return render_template('index.html')
 
 
@@ -34,7 +36,7 @@ def index():
 def login():
     error = None
     if request.method == 'POST':
-        if controller.user_login(
+        if recipeshelf.controller.user_login(
                 request.form['username'], request.form['password']
         ):
             session['username'] = request.form['username']
@@ -46,13 +48,19 @@ def login():
 
 @APP.route("/logout")
 def logout():
-    session.pop('username', None)
+    """
+    Log the user out and return to the login page.
+    """
+    recipeshelf.controller.user_logout(user='username')
     return redirect(url_for('login'))
 
 
 @APP.route("/internal/db_actions")
 def db_actions():
-    return controller.db_actions(
+    """
+    Perform database actions via HTTP GET method
+    """
+    return recipeshelf.controller.db_actions(
         action=request.args.get('action'), username=request.args.get('user')
     )
 
@@ -69,7 +77,7 @@ def create_recipe():
         quick_meal = False
         image_location = ''
         ingredients = request.form['ingredients'].split(',')
-        #controller.create_recipe(
+        #recipeshelf.controller.create_recipe(
         #    title, cuisine_type, primary_ingredient, user_id,
         #    serving_size, body, quick_meal, image_location, ingredients
         #)

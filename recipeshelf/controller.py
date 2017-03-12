@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, abort, url_for, session
 from flask_sqlalchemy import SQLAlchemy
-from models import *
+from recipeshelf.models import *
 
 
 def db_actions(action=None, username=None, email=''):
@@ -49,5 +49,8 @@ def user_login(user_login, password):
     return False
 
 
-def user_logout():
-    return session.pop['username', None]
+def user_logout(user=None):
+    """
+    Pop the current user out of the session.
+    """
+    return session.pop[user, None]
