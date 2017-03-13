@@ -25,6 +25,10 @@ def create_user(username, email, superuser=False):
     DB.session.commit()
 
 
+def update_password(password):
+    pass
+
+
 def create_recipe(
         title, cuisine_type, primary_ingredient, user_id,
         serving_size, body, quick_meal, image_location=None, *ingredients

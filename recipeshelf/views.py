@@ -116,8 +116,17 @@ def create_recipe():
       </form>
     </body>
     """
-    #    <textarea></textarea><br>
-    #    <input type="submit" value="Submit">
-    #  </form>
-    #</body>
-    #"""
+
+
+@APP.route('/create_user', methods=['GET', 'POST'])
+def create_user():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        recipeshelf.controller.db_actions(
+            action='newuser', username=username, email=email
+        )
+        recipeshelf.controller.update_password(password)
+        flash('User {} created'.format(username))
+    return render_template('create_user.html')

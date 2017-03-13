@@ -22,7 +22,8 @@
     <link href="{{ url_for(
         'static', filename='css/signin.css'
         ) }}" rel="stylesheet">
-
+  </head>
+  <body>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <ul class=flashes>
@@ -32,16 +33,13 @@
         </ul>
       {% endif %}
     {% endwith %}
-  </head>
-
-  <body>
-  {% block body %}{% endblock %}
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{{ url_for(
-            'static', filename='js/bootstrap.min.js'
-        ) }}"></script>
+    {% block body %}{% endblock %}
+      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <!-- Include all compiled plugins (below), or include individual files as needed -->
+      <script src="{{ url_for(
+              'static', filename='js/bootstrap.min.js'
+          ) }}"></script>
   </body>
 
 </html>
