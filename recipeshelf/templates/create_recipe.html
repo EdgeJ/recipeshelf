@@ -1,0 +1,26 @@
+{% extends "base_layout.html" %}
+{% block title %}
+  <title>Add a recipe</title>
+{% endblock %}
+{% block body %}
+  <body>
+    <form method="post" id="recipe">
+      Title:<br>
+      <input type="text" name="title"><br>
+      Cuisine Type:<br>
+      <input type="text" name="cuisine_type"><br>
+      Main Ingredient:<br>
+      <input type="text" name="primary_ingredient"><br>
+      Serving Size:<br>
+      <input type="text" name="serving_size"><br>
+      Ingredients:<br>
+      <input type="text" name="ingredients"><br>
+      Quick meal?
+      <input type="hidden" value="False" name="quick_meal">
+      <input type="checkbox" value="True" name="quick_meal"><br>
+      Main Recipe:<br>
+      <textarea name="body" form="recipe">Enter recipe here</textarea><br>
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+{% endblock %}

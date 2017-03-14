@@ -80,42 +80,19 @@ def create_recipe():
         title = request.form['title']
         cuisine_type = request.form['cuisine_type']
         primary_ingredient = request.form['primary_ingredient']
-        user_id = ''
+        body = request.form['body']
+        quick_meal = bool(request.form['quick_meal'])
         serving_size = request.form['serving_size']
-        body = ''
-        quick_meal = False
+        user_id = ''
         image_location = ''
         ingredients = request.form['ingredients'].split(',')
-        #recipeshelf.controller.create_recipe(
-        #    title, cuisine_type, primary_ingredient, user_id,
-        #    serving_size, body, quick_meal, image_location, ingredients
-        #)
-        #return redirect('recipe', id=recipe_id)
-        test_string = ''
-        for i in (title, cuisine_type, primary_ingredient, user_id,
-                  serving_size, body, quick_meal, image_location):
-            test_string += ' {0}'.format(str(i))
-        test_string += '<br>Ingredients:<br>'
-        for i in ingredients:
-            test_string += '{0}<br>'.format(str(i))
-        return test_string
-    return """
-    <body>
-      <form method="post">
-        Title:<br>
-        <input type="text" name="title"><br>
-        Cuisine Type:<br>
-        <input type="text" name="cuisine_type"><br>
-        Main Ingredient:<br>
-        <input type="text" name="primary_ingredient"><br>
-        Serving Size:<br>
-        <input type="text" name="serving_size"><br>
-        Ingredients:<br>
-        <input type="text" name="ingredients"><br>
-        <input type="submit" value="Submit">
-      </form>
-    </body>
-    """
+        recipeshelf.controller.create_recipe(
+            title, cuisine_type, primary_ingredient, user_id,
+            serving_size, body, quick_meal, image_location, ingredients
+        )
+        return redirect('recipe', id=recipe_id)
+    else:
+        return render_template('create_recipe.html')
 
 
 @APP.route('/create_user', methods=['GET', 'POST'])
@@ -129,4 +106,6 @@ def create_user():
         )
         recipeshelf.controller.update_password(password)
         flash('User {} created'.format(username))
-    return render_template('create_user.html')
+        return redirect(url_for('login'))
+    else:
+        return render_template('create_user.html')
