@@ -30,7 +30,7 @@ class Recipe(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     title = DB.Column(DB.Text, unique=True)
     image_location = DB.Column(DB.String(80))
-    cuisine_type = DB.Column(DB.String(40))
+    meal_type = DB.Column(DB.String(40))
     ingredient = DB.relationship('Ingredients', backref='recipe',
                                  lazy='dynamic')
     quick_meal = DB.Column(DB.Boolean)
@@ -39,14 +39,11 @@ class Recipe(DB.Model):
     recipe_contents = DB.relationship('RecipeContents', backref='recipe',
                                       lazy='dynamic')
 
-    def __init__(self, id, title, image_location, cuisine_type, ingredient,
-                 user_id, quick_meal):
+    def __init__(self, title, meal_type, quick_meal):
         self.title = title
-        self.image_location = image_location
         self.meal_type = meal_type
         self.quick_meal = quick_meal
         self.date_added = datetime.utcnow()
-        self.recipe_contents = recipe_contents
 
     def __repr__(self):
         return '<Title %r>' % self.title
@@ -63,7 +60,6 @@ class RecipeContents(DB.Model):
         self.recipe_id = recipe_id
         self.primary_ingredient = primary_ingredient
         self.serving_size = serving_size
-        self.cuisine_type = cuisine_type
         self.body = body
 
     def __repr__(self):

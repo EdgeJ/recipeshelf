@@ -76,23 +76,27 @@ def db_actions():
 
 @APP.route("/create_recipe", methods=['GET', 'POST'])
 def create_recipe():
-    if request.method == 'POST':
-        title = request.form['title']
-        cuisine_type = request.form['cuisine_type']
-        primary_ingredient = request.form['primary_ingredient']
-        body = request.form['body']
-        quick_meal = bool(request.form['quick_meal'])
-        serving_size = request.form['serving_size']
-        user_id = ''
-        image_location = ''
-        ingredients = request.form['ingredients'].split(',')
-        recipeshelf.controller.create_recipe(
-            title, cuisine_type, primary_ingredient, user_id,
-            serving_size, body, quick_meal, image_location, ingredients
-        )
-        return redirect('recipe', id=recipe_id)
+    if 'username' in session:
+        if request.method == 'POST':
+            title = request.form['title']
+            cuisine_type = request.form['cuisine_type']
+            primary_ingredient = request.form['primary_ingredient']
+            body = request.form['body']
+            quick_meal = bool(request.form['quick_meal'])
+            serving_size = request.form['serving_size']
+            user_id = session['username']
+            image_location = ''
+            ingredients = request.form['ingredients'].split(',')
+            recipeshelf.controller.create_recipe(
+                title, cuisine_type, primary_ingredient, user_id,
+                serving_size, body, quick_meal, image_location, ingredients
+            )
+            return redirect('recipe', id=recipe_id)
+        else:
+            return render_template('create_recipe.html')
     else:
-        return render_template('create_recipe.html')
+        flash('Please log in to post a recipe.')
+        return redirect(url_for('login'))
 
 
 @APP.route('/create_user', methods=['GET', 'POST'])
