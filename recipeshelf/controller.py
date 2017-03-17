@@ -30,17 +30,18 @@ def update_password(password):
 
 
 def create_recipe(
-        title, cuisine_type, primary_ingredient, user_id,
-        serving_size, body, quick_meal, image_location=None, *ingredients
+        title, meal_type, primary_ingredient, user_id,
+        serving_size, body, quick_meal, ingredients, image_location=None
 ):
-    next_id = Recipe.query.filterby(id).last() + 1
-    new_recipe = Recipe(next_id, title, image_location, cuisine_type,
-                        user_id, quick_meal)
-    new_recipe_body = RecipeContents(next_id, primary_ingredient,
+    new_recipe = Recipe(title, meal_type, quick_meal)
+    DB.session.add(new_recipe)
+    new_recipe_body = RecipeContents(new_recipe.id, primary_ingredient,
                                      serving_size, body)
+    DB.session.add(new_recipe_body)
+    all_ingredients = Ingredients.query.all()
     for ingredient in ingredients:
-        if not Ingredient.query.filter_by(ingredient):
-            new_ingredient = Ingredient(ingredient)
+        if ingredient not in all_ingredients:
+            new_ingredient = Ingredients(new_recipe.id, ingredient)
             DB.session.add(new_ingredient)
     DB.session.commit()
 

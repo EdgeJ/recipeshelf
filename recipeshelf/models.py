@@ -71,8 +71,9 @@ class Ingredients(DB.Model):
     name = DB.Column(DB.String(40))
     recipe_using = DB.Column(DB.String(10), DB.ForeignKey('recipe.id'))
 
-    def __init__(self, name):
+    def __init__(self, name, recipe_using):
         self.name = name
+        self.recipe_using = recipe_using
 
     def __repr__(self):
         return '<Name %r>' % self.name

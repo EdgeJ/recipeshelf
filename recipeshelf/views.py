@@ -32,6 +32,18 @@ def index():
     return render_template('index.html')
 
 
+@APP.route("/internal/db_actions")
+def db_actions():
+    """
+    Perform database actions via HTTP GET method
+    """
+    return recipeshelf.controller.db_actions(
+        action=request.args.get('action'),
+        username=request.args.get('user'),
+        email=request.args.get('email')
+    )
+
+
 @APP.route("/login", methods=['GET', 'POST'])
 def login():
     if 'username' in session:
@@ -62,24 +74,12 @@ def logout():
     return redirect(url_for('login'))
 
 
-@APP.route("/internal/db_actions")
-def db_actions():
-    """
-    Perform database actions via HTTP GET method
-    """
-    return recipeshelf.controller.db_actions(
-        action=request.args.get('action'),
-        username=request.args.get('user'),
-        email=request.args.get('email')
-    )
-
-
 @APP.route("/create_recipe", methods=['GET', 'POST'])
 def create_recipe():
     if 'username' in session:
         if request.method == 'POST':
             title = request.form['title']
-            cuisine_type = request.form['cuisine_type']
+            meal_type = request.form['meal_type']
             primary_ingredient = request.form['primary_ingredient']
             body = request.form['body']
             quick_meal = bool(request.form['quick_meal'])
@@ -88,15 +88,21 @@ def create_recipe():
             image_location = ''
             ingredients = request.form['ingredients'].split(',')
             recipeshelf.controller.create_recipe(
-                title, cuisine_type, primary_ingredient, user_id,
-                serving_size, body, quick_meal, image_location, ingredients
+                title, meal_type, primary_ingredient, user_id,
+                serving_size, body, quick_meal, ingredients, image_location
             )
-            return redirect('recipe', id=recipe_id)
+            # return redirect('recipe', id=recipe_id)
+            return "Recipe created"
         else:
             return render_template('create_recipe.html')
     else:
         flash('Please log in to post a recipe.')
         return redirect(url_for('login'))
+
+
+@APP.route("/recipe")
+def view_recipe(recipe_id):
+    return render_template('view_recipe.html', recipe_id)
 
 
 @APP.route('/create_user', methods=['GET', 'POST'])
