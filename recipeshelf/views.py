@@ -87,12 +87,11 @@ def create_recipe():
             user_id = session['username']
             image_location = ''
             ingredients = request.form['ingredients'].split(',')
-            recipeshelf.controller.create_recipe(
+            new_recipe_id = recipeshelf.controller.create_recipe(
                 title, meal_type, primary_ingredient, user_id,
                 serving_size, body, quick_meal, ingredients, image_location
             )
-            # return redirect('recipe', id=recipe_id)
-            return "Recipe created"
+            return redirect(url_for('recipe', recipe_id=new_recipe_id))
         else:
             return render_template('create_recipe.html')
     else:
@@ -100,9 +99,19 @@ def create_recipe():
         return redirect(url_for('login'))
 
 
-@APP.route("/recipe")
+@APP.route("/recipe/test")
+def test_create_recipe():
+    new_recipe_id = recipeshelf.controller.create_recipe(
+        'test', 'test type', 'primary_ingredient', 'test user_id',
+        '1', 'Lorum ipsum dolor si amet', False, 'ingredients', None
+    )
+    return redirect(url_for('view_recipe', recipe_id=new_recipe_id))
+
+
+@APP.route("/recipe/<int:recipe_id>")
 def view_recipe(recipe_id):
-    return render_template('view_recipe.html', recipe_id)
+    recipe = recipeshelf.controller.view_recipe(recipe_id)
+    return render_template('recipe.html', recipe=recipe)
 
 
 @APP.route('/create_user', methods=['GET', 'POST'])

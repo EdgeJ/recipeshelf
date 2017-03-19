@@ -34,16 +34,25 @@ def create_recipe(
         serving_size, body, quick_meal, ingredients, image_location=None
 ):
     new_recipe = Recipe(title, meal_type, quick_meal)
-    DB.session.add(new_recipe)
-    new_recipe_body = RecipeContents(new_recipe.id, primary_ingredient,
+    new_recipe_body = RecipeContents(new_recipe, primary_ingredient,
                                      serving_size, body)
+#     all_ingredients = Ingredients.query.all()
+#     for ingredient in ingredients:
+#         if ingredient not in all_ingredients:
+#             new_ingredient = Ingredients(new_recipe.id, ingredient)
+#             DB.session.add(new_ingredient)
+    DB.session.add(new_recipe)
     DB.session.add(new_recipe_body)
-    all_ingredients = Ingredients.query.all()
-    for ingredient in ingredients:
-        if ingredient not in all_ingredients:
-            new_ingredient = Ingredients(new_recipe.id, ingredient)
-            DB.session.add(new_ingredient)
     DB.session.commit()
+    return new_recipe.id
+
+
+def view_recipe(recipe_id):
+    return Recipe.query.filter_by(id=recipe_id).first()
+
+
+def view_ingredient(ingredient_name):
+    return Ingredient.query.filter_by(name=ingredient_name).first()
 
 
 def user_login(user_login, password):

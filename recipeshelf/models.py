@@ -14,7 +14,6 @@ class User(DB.Model):
     password = DB.Column(DB.String(20))
     email = DB.Column(DB.String(20), unique=True)
     superuser = DB.Column(DB.Boolean)
-    recipes = DB.relationship('Recipe', backref='user', lazy='dynamic')
 
     def __init__(self, username, password, email, superuser=False):
         self.username = username
@@ -31,13 +30,8 @@ class Recipe(DB.Model):
     title = DB.Column(DB.Text, unique=True)
     image_location = DB.Column(DB.String(80))
     meal_type = DB.Column(DB.String(40))
-    ingredient = DB.relationship('Ingredients', backref='recipe',
-                                 lazy='dynamic')
     quick_meal = DB.Column(DB.Boolean)
     date_added = DB.Column(DB.DateTime)
-    user_id = DB.Column(DB.String(10), DB.ForeignKey('user.id'))
-    recipe_contents = DB.relationship('RecipeContents', backref='recipe',
-                                      lazy='dynamic')
 
     def __init__(self, title, meal_type, quick_meal):
         self.title = title
@@ -52,12 +46,15 @@ class Recipe(DB.Model):
 class RecipeContents(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     recipe_id = DB.Column(DB.Integer, DB.ForeignKey('recipe.id'))
+    recipe = DB.relationship(
+        'Recipe', backref=DB.backref('recipe_contents', lazy='dynamic')
+    )
     primary_ingredient = DB.Column(DB.String(40))
     serving_size = DB.Column(DB.Integer)
     body = DB.Column(DB.Text)
 
-    def __init__(self, recipe_id, primary_ingredient, serving_size, body=None):
-        self.recipe_id = recipe_id
+    def __init__(self, recipe, primary_ingredient, serving_size, body=None):
+        self.recipe = recipe
         self.primary_ingredient = primary_ingredient
         self.serving_size = serving_size
         self.body = body
@@ -69,11 +66,13 @@ class RecipeContents(DB.Model):
 class Ingredients(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True, unique=True)
     name = DB.Column(DB.String(40))
-    recipe_using = DB.Column(DB.String(10), DB.ForeignKey('recipe.id'))
+    recipe_id = DB.Column(DB.String(10), DB.ForeignKey('recipe.id'))
+    recipe = DB.relationship(
+        'Recipe', backref=DB.backref('ingredient', lazy='dynamic')
+    )
 
-    def __init__(self, name, recipe_using):
+    def __init__(self, recipe, name):
         self.name = name
-        self.recipe_using = recipe_using
 
     def __repr__(self):
         return '<Name %r>' % self.name
