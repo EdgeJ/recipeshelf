@@ -33,22 +33,27 @@ def create_recipe(
         title, meal_type, primary_ingredient, user_id,
         serving_size, body, quick_meal, ingredients, image_location=None
 ):
-    new_recipe = Recipe(title, meal_type, quick_meal)
-    new_recipe_body = RecipeContents(new_recipe, primary_ingredient,
-                                     serving_size, body)
-#     all_ingredients = Ingredients.query.all()
-#     for ingredient in ingredients:
-#         if ingredient not in all_ingredients:
-#             new_ingredient = Ingredients(new_recipe.id, ingredient)
-#             DB.session.add(new_ingredient)
+    new_recipe = Recipe(title)
+    if image_location is not None:
+        new_recipe.image_location = image_location
+    if quick_meal:
+        new_recipe.quick_meal = True
+    new_recipe_contents = RecipeContents(
+        meal_type, primary_ingredient, serving_size, body
+    )
+    new_recipe.recipe_contents = new_recipe_contents
+    for ingredient in ingredients:
+        new_ingredient = Ingredient(ingredient)
+        new_recipe.ingredients.append(new_ingredient)
+        DB.session.add(new_ingredient)
     DB.session.add(new_recipe)
-    DB.session.add(new_recipe_body)
+    DB.session.add(new_recipe_contents)
     DB.session.commit()
     return new_recipe.id
 
 
 def view_recipe(recipe_id):
-    return Recipe.query.filter_by(id=recipe_id).first()
+    return Recipe.query.get_or_404(recipe_id)
 
 
 def view_ingredient(ingredient_name):

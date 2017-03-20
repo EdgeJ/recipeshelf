@@ -3,13 +3,17 @@
 <title>Recipe</title>
 {% endblock %}
 {% block body %}
+<div>
   Recipe id: {{ recipe.id }}<br>
   Title: {{ recipe.title }}<br>
   Image: {{ recipe.image_location }}<br>
-  Cuisine: {{ recipe.meal_type }}<br>
-  Primary ingredient: {{ recipe.primary_ingredient }}<br>
-  {{ recipe.quick_meal }}<br>
+  Cuisine: {{ recipe.recipe_contents.meal_type }}<br>
+  Serving size: {{ recipe.recipe_contents.serving_size }}<br>
+  Primary ingredient: {{ recipe.recipe_contents.primary_ingredient }}<br>
+  Quick meal: {{ recipe.quick_meal }}<br>
   Date added: {{ recipe.date_added }}<br>
   Author: {{ recipe.user_id }}<br>
-  Recipe: {{ recipe.recipe_contents.first().body }}<br>
+  Ingredients: {{ recipe.ingredients.all() }}<br>
+  Recipe: {{ recipe.recipe_contents.body }}<br>
+</div>
 {% endblock %}

@@ -91,7 +91,7 @@ def create_recipe():
                 title, meal_type, primary_ingredient, user_id,
                 serving_size, body, quick_meal, ingredients, image_location
             )
-            return redirect(url_for('recipe', recipe_id=new_recipe_id))
+            return redirect(url_for('view_recipe', recipe_id=new_recipe_id))
         else:
             return render_template('create_recipe.html')
     else:

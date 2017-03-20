@@ -4,8 +4,23 @@ from flask_sqlalchemy import SQLAlchemy
 import recipeshelf.settings
 
 APP = Flask(__name__)
-APP.config['SQLALCHEMY_DATABASE_URI'] = recipeshelf.settings.SQLALCHEMY_DATABASE_URI
+APP.config[
+    'SQLALCHEMY_DATABASE_URI'
+] = recipeshelf.settings.SQLALCHEMY_DATABASE_URI
 DB = SQLAlchemy(APP)
+RECIPE_INGREDIENTS = DB.Table(
+    'recipe_ingredients',
+    DB.Column(
+        'recipe_id',
+        DB.Integer,
+        DB.ForeignKey('recipe.id')
+    ),
+    DB.Column(
+        'ingredient_id',
+        DB.Integer,
+        DB.ForeignKey('ingredient.id')
+    )
+)
 
 
 class User(DB.Model):
@@ -28,16 +43,21 @@ class User(DB.Model):
 class Recipe(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     title = DB.Column(DB.Text, unique=True)
-    image_location = DB.Column(DB.String(80))
-    meal_type = DB.Column(DB.String(40))
-    quick_meal = DB.Column(DB.Boolean)
     date_added = DB.Column(DB.DateTime)
+    image_location = DB.Column(DB.String(80))
+    quick_meal = DB.Column(DB.Boolean)
+    ingredients = DB.relationship(
+        'Ingredient', secondary=RECIPE_INGREDIENTS,
+        backref=DB.backref('recipe_using'), lazy='dynamic'
+    )
+    recipe_contents = DB.relationship(
+        'RecipeContents', backref=DB.backref('recipe_using'), uselist=False
+    )
 
-    def __init__(self, title, meal_type, quick_meal):
+    def __init__(self, title):
         self.title = title
-        self.meal_type = meal_type
-        self.quick_meal = quick_meal
         self.date_added = datetime.utcnow()
+        self.quick_meal = False
 
     def __repr__(self):
         return '<Title %r>' % self.title
@@ -46,15 +66,14 @@ class Recipe(DB.Model):
 class RecipeContents(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     recipe_id = DB.Column(DB.Integer, DB.ForeignKey('recipe.id'))
-    recipe = DB.relationship(
-        'Recipe', backref=DB.backref('recipe_contents', lazy='dynamic')
-    )
+    meal_type = DB.Column(DB.String(40))
     primary_ingredient = DB.Column(DB.String(40))
     serving_size = DB.Column(DB.Integer)
     body = DB.Column(DB.Text)
 
-    def __init__(self, recipe, primary_ingredient, serving_size, body=None):
-        self.recipe = recipe
+    def __init__(self, meal_type, primary_ingredient,
+                 serving_size, body=None):
+        self.meal_type = meal_type
         self.primary_ingredient = primary_ingredient
         self.serving_size = serving_size
         self.body = body
@@ -63,15 +82,11 @@ class RecipeContents(DB.Model):
         return '<Body %r>' % self.body
 
 
-class Ingredients(DB.Model):
+class Ingredient(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True, unique=True)
     name = DB.Column(DB.String(40))
-    recipe_id = DB.Column(DB.String(10), DB.ForeignKey('recipe.id'))
-    recipe = DB.relationship(
-        'Recipe', backref=DB.backref('ingredient', lazy='dynamic')
-    )
 
-    def __init__(self, recipe, name):
+    def __init__(self, name):
         self.name = name
 
     def __repr__(self):
