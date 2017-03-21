@@ -29,6 +29,9 @@ class User(DB.Model):
     password = DB.Column(DB.String(20))
     email = DB.Column(DB.String(20), unique=True)
     superuser = DB.Column(DB.Boolean)
+    recipes_created = DB.relationship(
+        'Recipe', backref=DB.backref('user'), lazy='dynamic'
+    )
 
     def __init__(self, username, password, email, superuser=False):
         self.username = username
@@ -46,6 +49,7 @@ class Recipe(DB.Model):
     date_added = DB.Column(DB.DateTime)
     image_location = DB.Column(DB.String(80))
     quick_meal = DB.Column(DB.Boolean)
+    user_id = DB.Column(DB.Integer, DB.ForeignKey('user.id'))
     ingredients = DB.relationship(
         'Ingredient', secondary=RECIPE_INGREDIENTS,
         backref=DB.backref('recipe_using'), lazy='dynamic'

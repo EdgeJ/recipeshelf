@@ -12,8 +12,12 @@ def db_actions(action=None, username=None, email=''):
         DB.drop_all()
         return 'Databased cleared.'
     if action == 'newuser':
-        create_user(username, email)
-        return 'User {0} created.'.format(username)
+        try:
+            create_user(username, email)
+        except:
+            DB.session.rollback()
+            return 'User {} could not be created'.format(username)
+        return 'User {} created.'.format(username)
     if action is None:
         return False
 
@@ -29,8 +33,12 @@ def update_password(password):
     pass
 
 
+def get_all_recipes():
+    return Recipe.query.all()
+
+
 def create_recipe(
-        title, meal_type, primary_ingredient, user_id,
+        title, meal_type, primary_ingredient, user,
         serving_size, body, quick_meal, ingredients, image_location=None
 ):
     new_recipe = Recipe(title)

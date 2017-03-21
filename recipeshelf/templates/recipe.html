@@ -1,19 +1,36 @@
 {% extends "base_layout.html" %}
 {% block title %}
-<title>Recipe</title>
+    <title>{{ recipe.title }}</title>
 {% endblock %}
 {% block body %}
-<div>
-  Recipe id: {{ recipe.id }}<br>
-  Title: {{ recipe.title }}<br>
-  Image: {{ recipe.image_location }}<br>
-  Cuisine: {{ recipe.recipe_contents.meal_type }}<br>
-  Serving size: {{ recipe.recipe_contents.serving_size }}<br>
-  Primary ingredient: {{ recipe.recipe_contents.primary_ingredient }}<br>
-  Quick meal: {{ recipe.quick_meal }}<br>
-  Date added: {{ recipe.date_added }}<br>
-  Author: {{ recipe.user_id }}<br>
-  Ingredients: {{ recipe.ingredients.all() }}<br>
-  Recipe: {{ recipe.recipe_contents.body }}<br>
-</div>
+    <div>
+        <h1>{{ recipe.title }}</h1>
+        {% if recipe.quick_meal == True %}
+            <b>Quick Recipe</b><br>
+        {% endif %}
+        <p>
+            Date added: {{ recipe.date_added }}<br>
+            Author: {{ recipe.user_id }}<br>
+        </p>
+        <div>
+            <p>
+            <!-- {{ recipe.image_location }} -->
+            Cuisine: {{ recipe.recipe_contents.meal_type }}<br>
+            Serving size: {{ recipe.recipe_contents.serving_size }}<br>
+            Primary ingredient: {{ recipe.recipe_contents.primary_ingredient }}<br>
+            </p>
+            <div>
+            Ingredients:<br>
+            {% for ingredient in recipe.ingredients.all() %}
+                <li>{{ ingredient.name }}</li>
+            {% endfor %}
+            </div>
+        </div>
+        <div>
+            <p>
+            Recipe:<br>
+            {{ recipe.recipe_contents.body }}
+            </p>
+        </div>
+    </div>
 {% endblock %}

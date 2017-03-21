@@ -99,11 +99,18 @@ def create_recipe():
         return redirect(url_for('login'))
 
 
+@APP.route("/recipes")
+def show_all_recipes():
+    return render_template(
+        'all_recipes.html', recipes=recipeshelf.controller.get_all_recipes()
+    )
+
+
 @APP.route("/recipe/test")
 def test_create_recipe():
     new_recipe_id = recipeshelf.controller.create_recipe(
         'test', 'test type', 'primary_ingredient', 'test user_id',
-        '1', 'Lorum ipsum dolor si amet', False, 'ingredients', None
+        '1', 'Lorum ipsum dolor si amet', False, ['ingredients'], None
     )
     return redirect(url_for('view_recipe', recipe_id=new_recipe_id))
 
