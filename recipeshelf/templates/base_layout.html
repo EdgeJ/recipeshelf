@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <!-- The above 3 meta tags *must* come first in the head -->
+    <!-- any other head content must come *after* these tags -->
     <meta name="Title" content="Recipeshelf">
     <meta name="Author" content="John Edge">
     <link rel="icon" href="{{ url_for(
@@ -28,7 +29,12 @@
       {% if messages %}
         <ul class=flashes>
         {% for message in messages %}
-          <li>{{ message }}</li>
+          <script>
+            var messages = {{ messages | safe }};
+            for (var i=0; i<messages.length; i++) {
+              alert(messages[i]);
+            }
+          </script>
         {% endfor %}
         </ul>
       {% endif %}
@@ -41,5 +47,4 @@
               'static', filename='js/bootstrap.min.js'
           ) }}"></script>
   </body>
-
 </html>
