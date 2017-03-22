@@ -39,7 +39,7 @@ def get_all_recipes():
 
 def create_recipe(
         title, meal_type, primary_ingredient, user,
-        serving_size, body, quick_meal, ingredients, image_location=None
+        serving_size, body, quick_meal, image_location=None, **ingredients
 ):
     new_recipe = Recipe(title)
     if image_location is not None:
@@ -50,12 +50,15 @@ def create_recipe(
         meal_type, primary_ingredient, serving_size, body
     )
     new_recipe.recipe_contents = new_recipe_contents
-    for ingredient in ingredients:
-        new_ingredient = Ingredient(ingredient)
+    for ingredient, amount in ingredients:
+        new_ingredient = Ingredient(ingredient, amount)
         new_recipe.ingredients.append(new_ingredient)
         DB.session.add(new_ingredient)
+    creating_user = User.query.filter_by(username=user).first()
+    creating_user.recipes_created.append(new_recipe)
     DB.session.add(new_recipe)
     DB.session.add(new_recipe_contents)
+    DB.session.add(creating_user)
     DB.session.commit()
     return new_recipe.id
 

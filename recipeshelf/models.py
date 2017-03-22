@@ -89,9 +89,11 @@ class RecipeContents(DB.Model):
 class Ingredient(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True, unique=True)
     name = DB.Column(DB.String(40))
+    amount = DB.Column(DB.String(20))
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, name, amount):
+        self.name = name.lower()
+        self.amount = amount.lower()
 
     def __repr__(self):
         return '<Name %r>' % self.name
