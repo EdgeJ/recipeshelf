@@ -5,7 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 DEBUG = False
 SECRET_KEY = os.urandom(24)
 SQLALCHEMY_DATABASE_URI = "sqlite:///{}".format(
-    os.path.join(basedir, 'recipeshelf/database.db')
+    os.path.join(basedir, 'recipeshelf.db')
 )
 DATABASE_CONNECT_OPTIONS = {}
 

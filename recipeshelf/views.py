@@ -31,13 +31,13 @@ def index():
 @app.route("/internal/db_actions", methods=['POST', 'DELETE'])
 def db_actions():
     """
-    Perform database actions via HTTP GET method
+    Create or destroy the entire database.
     """
-    return recipeshelf.controller.db_actions(
-        action=request.args.get('action'),
-        username=request.args.get('user'),
-        email=request.args.get('email')
-    )
+    if app.config['DEBUG'] is True:
+        if request.method == 'POST':
+            return recipeshelf.controller.db_actions(action='create')
+        else:
+            return recipeshelf.controller.db_actions(action='destroy')
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -123,9 +123,7 @@ def create_user():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
-        recipeshelf.controller.db_actions(
-            action='newuser', username=username, email=email
-        )
+        recipeshelf.controller.create_user(username, email)
         recipeshelf.controller.update_password(password)
         flash('User {} created'.format(username))
         return redirect(url_for('login'))

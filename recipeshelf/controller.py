@@ -1,23 +1,15 @@
-from flask import Flask, render_template, request, abort, url_for, session
-from flask_sqlalchemy import SQLAlchemy
+from flask import render_template, request, abort, url_for, session
 from recipeshelf.models import *
 
 
-def db_actions(action=None, username=None, email=''):
+def db_actions(action=None):
     if action == 'create':
-        DB.create_all()
+        db.create_all()
         return 'Database created.'
     if action == 'destroy':
-        DB.session.rollback()
-        DB.drop_all()
+        db.session.rollback()
+        db.drop_all()
         return 'Databased cleared.'
-    if action == 'newuser':
-        try:
-            create_user(username, email)
-        except:
-            DB.session.rollback()
-            return 'User {} could not be created'.format(username)
-        return 'User {} created.'.format(username)
     if action is None:
         return False
 
@@ -25,8 +17,14 @@ def db_actions(action=None, username=None, email=''):
 def create_user(username, email, superuser=False):
     password = None
     new_user = User(username, password, email, superuser)
-    DB.session.add(new_user)
-    DB.session.commit()
+    db.session.add(new_user)
+    db.session.commit()
+
+
+def delete_user(user_id):
+    user_to_delete = User.query.filter_by(user_id)
+    db.session.remove(user_to_delete)
+    db.session.commit()
 
 
 def update_password(password):
@@ -53,13 +51,13 @@ def create_recipe(
     for ingredient, amount in ingredients:
         new_ingredient = Ingredient(ingredient, amount)
         new_recipe.ingredients.append(new_ingredient)
-        DB.session.add(new_ingredient)
+        db.session.add(new_ingredient)
     creating_user = User.query.filter_by(username=user).first()
     creating_user.recipes_created.append(new_recipe)
-    DB.session.add(new_recipe)
-    DB.session.add(new_recipe_contents)
-    DB.session.add(creating_user)
-    DB.session.commit()
+    db.session.add(new_recipe)
+    db.session.add(new_recipe_contents)
+    db.session.add(creating_user)
+    db.session.commit()
     return new_recipe.id
 
 

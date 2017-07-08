@@ -7,7 +7,7 @@ import unittest
 from flask import Flask
 from flask_testing import TestCase
 sys.path.insert(0, '../recipeshelf')
-from recipeshelf.models import DB, User
+from recipeshelf.models import db, User
 
 
 class TestUserCreate(TestCase):
@@ -17,21 +17,23 @@ class TestUserCreate(TestCase):
     def create_app(self):
         app = Flask(__name__)
         app.config['TESTING'] = True
+        app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///./test.db"
         return app
 
     def setup(self):
-        DB.create_all()
+        db.create_all()
 
     def teardown(self):
-        DB.session.remove()
-        DB.drop_all()
+        db.session.remove()
+        db.drop_all()
 
     def test_create(self):
-        user = User()
-        DB.session.add(user)
-        DB.session.commit()
-        assert user in DB.session
+        user = User('John Smith', 'changeme', 'mail@example.com')
+        db.session.add(user)
+        db.session.commit()
+        assert user in db.session
         response = self.client.get("/")
+
 
 if __name__ == '__main__':
     unittest.main()
