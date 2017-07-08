@@ -1,0 +1,12 @@
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+DEBUG = False
+SECRET_KEY = os.urandom(24)
+SQLALCHEMY_DATABASE_URI = "sqlite:///{}".format(
+    os.path.join(basedir, 'recipeshelf/database.db')
+)
+DATABASE_CONNECT_OPTIONS = {}
+
+del os

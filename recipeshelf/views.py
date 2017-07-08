@@ -4,18 +4,14 @@ Views for the recipeshelf application
 This module controls the routing, error handling, URL generation, and
 sessions of the webpage.
 """
-from os import urandom
-from flask import abort, flash, Flask, redirect, render_template, request, session, url_for
+from flask import abort, flash, redirect, render_template, request, session, url_for
+from recipeshelf import app
 import recipeshelf.controller
-
-APP = Flask(__name__)
-APP.secret_key = urandom(24)
-
 
 # Error handling
 # This dynamically routes all error codes from 400 to 599
 for error_code in range(400, 599):
-    @APP.errorhandler(error_code)
+    @app.errorhandler(error_code)
     def http_error_code(error):
         """
         Render error page for error code passed in as an argument.
@@ -24,7 +20,7 @@ for error_code in range(400, 599):
 
 
 # Routing
-@APP.route("/")
+@app.route("/")
 def index():
     """
     Render index page.
@@ -32,7 +28,7 @@ def index():
     return render_template('index.html')
 
 
-@APP.route("/internal/db_actions")
+@app.route("/internal/db_actions", methods=['POST', 'DELETE'])
 def db_actions():
     """
     Perform database actions via HTTP GET method
@@ -44,7 +40,7 @@ def db_actions():
     )
 
 
-@APP.route("/login", methods=['GET', 'POST'])
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     if 'username' in session:
         flash('You are already logged in.')
@@ -64,7 +60,7 @@ def login():
         return render_template('login.html')
 
 
-@APP.route("/logout")
+@app.route("/logout")
 def logout():
     """
     Log the user out and return to the login page.
@@ -74,7 +70,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-@APP.route("/create_recipe", methods=['GET', 'POST'])
+@app.route("/create_recipe", methods=['GET', 'POST'])
 def create_recipe():
     if 'username' in session:
         if request.method == 'POST':
@@ -99,14 +95,14 @@ def create_recipe():
         return redirect(url_for('login'))
 
 
-@APP.route("/recipes")
+@app.route("/recipes")
 def show_all_recipes():
     return render_template(
         'all_recipes.html', recipes=recipeshelf.controller.get_all_recipes()
     )
 
 
-@APP.route("/recipe/test")
+@app.route("/recipe/test")
 def test_create_recipe():
     new_recipe_id = recipeshelf.controller.create_recipe(
         'test', 'test type', 'primary_ingredient', 'test user_id',
@@ -115,13 +111,13 @@ def test_create_recipe():
     return redirect(url_for('view_recipe', recipe_id=new_recipe_id))
 
 
-@APP.route("/recipe/<int:recipe_id>")
+@app.route("/recipe/<int:recipe_id>")
 def view_recipe(recipe_id):
     recipe = recipeshelf.controller.view_recipe(recipe_id)
     return render_template('recipe.html', recipe=recipe)
 
 
-@APP.route('/create_user', methods=['GET', 'POST'])
+@app.route('/create_user', methods=['GET', 'POST'])
 def create_user():
     if request.method == 'POST':
         username = request.form['username']

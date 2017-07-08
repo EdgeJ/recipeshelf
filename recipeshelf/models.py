@@ -1,36 +1,32 @@
 from datetime import datetime
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import recipeshelf.settings
+from recipeshelf import app
 
-APP = Flask(__name__)
-APP.config[
-    'SQLALCHEMY_DATABASE_URI'
-] = recipeshelf.settings.SQLALCHEMY_DATABASE_URI
-DB = SQLAlchemy(APP)
-RECIPE_INGREDIENTS = DB.Table(
+db = SQLAlchemy(app)
+recipe_ingredients = db.Table(
     'recipe_ingredients',
-    DB.Column(
+    db.Column(
         'recipe_id',
-        DB.Integer,
-        DB.ForeignKey('recipe.id')
+        db.Integer,
+        db.ForeignKey('recipe.id')
     ),
-    DB.Column(
+    db.Column(
         'ingredient_id',
-        DB.Integer,
-        DB.ForeignKey('ingredient.id')
+        db.Integer,
+        db.ForeignKey('ingredient.id')
     )
 )
 
 
-class User(DB.Model):
-    id = DB.Column(DB.Integer, primary_key=True)
-    username = DB.Column(DB.String(10), unique=True)
-    password = DB.Column(DB.String(20))
-    email = DB.Column(DB.String(20), unique=True)
-    superuser = DB.Column(DB.Boolean)
-    recipes_created = DB.relationship(
-        'Recipe', backref=DB.backref('user'), lazy='dynamic'
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(10), unique=True)
+    password = db.Column(db.String(20))
+    email = db.Column(db.String(20), unique=True)
+    superuser = db.Column(db.Boolean)
+    recipes_created = db.relationship(
+        'Recipe', backref=db.backref('user'), lazy='dynamic'
     )
 
     def __init__(self, username, password, email, superuser=False):
@@ -43,19 +39,19 @@ class User(DB.Model):
         return '<User %r>' % self.username
 
 
-class Recipe(DB.Model):
-    id = DB.Column(DB.Integer, primary_key=True)
-    title = DB.Column(DB.Text, unique=True)
-    date_added = DB.Column(DB.DateTime)
-    image_location = DB.Column(DB.String(80))
-    quick_meal = DB.Column(DB.Boolean)
-    user_id = DB.Column(DB.Integer, DB.ForeignKey('user.id'))
-    ingredients = DB.relationship(
-        'Ingredient', secondary=RECIPE_INGREDIENTS,
-        backref=DB.backref('recipe_using'), lazy='dynamic'
+class Recipe(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text, unique=True)
+    date_added = db.Column(db.DateTime)
+    image_location = db.Column(db.String(80))
+    quick_meal = db.Column(db.Boolean)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    ingredients = db.relationship(
+        'Ingredient', secondary=recipe_ingredients,
+        backref=db.backref('recipe_using'), lazy='dynamic'
     )
-    recipe_contents = DB.relationship(
-        'RecipeContents', backref=DB.backref('recipe_using'), uselist=False
+    recipe_contents = db.relationship(
+        'RecipeContents', backref=db.backref('recipe_using'), uselist=False
     )
 
     def __init__(self, title):
@@ -67,13 +63,13 @@ class Recipe(DB.Model):
         return '<Title %r>' % self.title
 
 
-class RecipeContents(DB.Model):
-    id = DB.Column(DB.Integer, primary_key=True)
-    recipe_id = DB.Column(DB.Integer, DB.ForeignKey('recipe.id'))
-    meal_type = DB.Column(DB.String(40))
-    primary_ingredient = DB.Column(DB.String(40))
-    serving_size = DB.Column(DB.Integer)
-    body = DB.Column(DB.Text)
+class RecipeContents(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'))
+    meal_type = db.Column(db.String(40))
+    primary_ingredient = db.Column(db.String(40))
+    serving_size = db.Column(db.Integer)
+    body = db.Column(db.Text)
 
     def __init__(self, meal_type, primary_ingredient,
                  serving_size, body=None):
@@ -86,10 +82,10 @@ class RecipeContents(DB.Model):
         return '<Body %r>' % self.body
 
 
-class Ingredient(DB.Model):
-    id = DB.Column(DB.Integer, primary_key=True, unique=True)
-    name = DB.Column(DB.String(40))
-    amount = DB.Column(DB.String(20))
+class Ingredient(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    name = db.Column(db.String(40))
+    amount = db.Column(db.String(20))
 
     def __init__(self, name, amount):
         self.name = name.lower()
