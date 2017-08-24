@@ -1,0 +1,44 @@
+<!--
+{% extends "base_layout.html" %}
+{% block title %}
+    <title>{{ recipe.title }}</title>
+{% endblock %}
+{% block body %}
+-->
+    <div>
+      <h1><%= @recipe.title -%></h1>
+      <!-- TODO: implement this in ruby
+        {% if recipe.quick_meal == True %}
+            <b>Quick Recipe</b><br>
+        {% endif %}
+        <p>
+            Date added: {{ recipe.date_added }}<br>
+            Author: {{ recipe.user_id }}<br>
+        </p>
+      -->
+        <div>
+            <p>
+            <!-- {{ recipe.image_location }} -->
+            Cuisine: <%= @recipe.meal_type %><br>
+            Serving size: <%= @recipe.serving_size %><br>
+            Primary ingredient: <%= @recipe.primary_ingredient %>
+            </p>
+            <div>
+              Ingredients:<br>
+              <!--
+            {% for ingredient in recipe.ingredients.all() %}
+                <li>{{ ingredient.name }}</li>
+            {% endfor %}
+              -->
+            </div>
+        </div>
+        <div>
+            <p>
+            Recipe:<br>
+            <%= @recipe.body %>
+            </p>
+        </div>
+        <div>
+          <%= link_to 'All Recipes', recipes_path %>
+        </div> 
+    </div>

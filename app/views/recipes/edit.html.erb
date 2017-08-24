@@ -1,0 +1,104 @@
+<%#{% extends "base_layout.html" %}-%>
+<%#{% block title %} -%>
+  <title>Edit recipe</title>
+  <%#{% endblock %}-%>
+<%#{% block body %}-%>
+  <body>
+    <script src="{{ url_for(
+              'static', filename='js/ingredients.js'
+          ) }}"></script>
+    <div class="panel panel-default">
+      <div class="container">
+        <div class="panel-body">
+            <!--
+                <form method="post" id="recipe">
+            -->
+             <div class="col-sm-3 nopadding">
+              <%= form_for @recipe do |form| -%>
+                <% if @recipe.errors.any? %>
+                  <div id="error_explanation">
+                    <h2>
+                      <%= pluralize(@recipe.errors.count, "error") %> prohibited
+                      this recipe from being saved:
+                    </h2>
+                    <ul>
+                      <% @recipe.errors.full_messages.each do |msg| %>
+                        <li><%= msg %></li>
+                      <% end %>
+                    </ul>
+                  </div>
+                <% end %>
+                <%= form.label :title %>
+                <%= form.text_field :title %>
+                <%= form.label :meal_type %>
+                <%= form.text_field :meal_type %>
+                <%= form.label :primary_ingredient %>
+                <%= form.text_field :primary_ingredient %>
+                <%= form.label :serving_size %>
+                <%= form.text_field :serving_size %>
+                <!--
+            <input type="text" class="form-control"  name="title" placeholder="Title">
+            <input type="text" class="form-control"  name="meal_type" placeholder="Cuisine type">
+            <input type="text" class="form-control"  name="primary_ingredient" placeholder="Primary ingredient">
+            <input type="text" class="form-control"  name="serving_size" placeholder="Serving size">
+                -->
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="ingredient_fields"></div>
+            <div class="col-sm-3 nopadding">
+              <div class="form-group">
+                    <%= form.label :amount %>
+                    <%= form.text_field :amount %>
+                  <!--
+                <input type="text" class="form-control" id="Amount" name="Amount[]" value="" placeholder="Amount">
+                  -->
+                </div>
+            </div>
+          <div class="col-sm-3 nopadding">
+            <div class="form-group">
+              <select class="form-control" id="Measure" name="Measure[]">
+          
+                <option value="">Measure</option>
+                <option value="C">C</option>
+                <option value="Tbsp">Tbsp</option>
+                <option value="tsp">tsp</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-3 nopadding">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" id="Ingredient" name="Ingredient[]" value="" placeholder="Ingredient">
+                <div class="input-group-btn">
+                  <button class="btn btn-success" type="button"  onclick="ingredient_fields();">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <br>
+              Quick meal?
+              <input type="hidden" value="False" name="quick_meal">
+              <input type="checkbox" value="True" name="quick_meal"><br>
+                <%= form.label :body %>
+                <%= form.text_field :body %>
+                <br>
+                <%= form.submit %>
+              <% end%>
+                <!--
+              <textarea rows=10 class="form-control" name="body" form="recipe">Enter recipe here</textarea><br>
+              <input type="submit" value="Submit">
+                -->
+            </div>
+          </div>
+        </div>
+        </form>
+      </div>
+    <div class="clear"></div>
+  </body>
+  <%#{% endblock %}-%>

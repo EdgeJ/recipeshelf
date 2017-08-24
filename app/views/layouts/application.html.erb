@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head -->
+    <!-- any other head content must come *after* these tags -->
+    <meta name="Title" content="Recipeshelf">
+    <meta name="Author" content="John Edge">
+    <link rel="icon" href="{{ url_for(
+        'static', filename='icons/favicon.ico'
+     )}}">
+
+    <!-- TODO: set this per page -->
+    <title>Recipeshelf</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for(
+        'static', filename='css/bootstrap.min.css'
+        ) }}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for(
+        'static', filename='css/signin.css'
+        ) }}" rel="stylesheet">
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+    <%= yield %>
+      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <!-- Include all compiled plugins (below), or include individual files as needed -->
+      <script src="{{ url_for(
+              'static', filename='js/bootstrap.min.js'
+          ) }}"></script>
+  </body>
+</html>
